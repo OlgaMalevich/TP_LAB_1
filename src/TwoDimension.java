@@ -1,18 +1,11 @@
 import java.awt.*;
 
 public abstract class TwoDimension extends Figure {
-    public Color bgColor;
+    public Color backgroundColor;
+    public TwoDimension() {}
+    public Color getBackgroundColor() {return backgroundColor;}
 
-    public TwoDimension() {
-    }
-    public Color getBgColor() {
+    public void setBackgroundColor(Color backgroundColor) { this.backgroundColor = backgroundColor;}
 
-        return null;
-    }
-    public void setBgColor(Color newBgColor) {
-    }
-
-    public void move(Point newCenter) {
-    }
-
+    public void move(Point newCenter) { }
 }

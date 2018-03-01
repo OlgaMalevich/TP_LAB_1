@@ -3,6 +3,8 @@ import java.awt.*;
 public abstract class Figure {
     public Point center;
     public Color borderColor;
+    public Point getCenter() {return center;}
+    public void setCenter(Point center) {this.center = center;}
     public Figure() {}
     public Color getBorderColor() {
         return borderColor;
