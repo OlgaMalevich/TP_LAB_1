@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
@@ -90,7 +91,6 @@ class MyWindow extends JFrame {
         ActionListener comboListener = e -> {
             String s = (String) ((JComboBox) e.getSource()).getSelectedItem();
             drawPanel.setToDraw(s);
-            System.out.println(s);
             if (s != null) {
                 switch (s) {
                     case "Линия":
@@ -168,7 +168,21 @@ class MyWindow extends JFrame {
         menuPanel.add(textRegPoligon);
         menuPanel.add(infoLable);
         menuPanel.add(new JScrollPane(infoWindow));
-
+        JButton moveButton = new JButton("Передвинуть");
+        moveButton.addActionListener(e -> {
+            if(radioOneD.isSelected())
+                infoWindow.setText("Введите новую точку начала.");
+            else
+                infoWindow.setText("Введите новую точку центра фигуры.");
+            drawPanel.setToDraw("move");
+        });
+        menuPanel.add(moveButton);
+        JButton locationButton = new JButton("Показать расположение");
+        locationButton.addActionListener(e -> {
+            drawPanel.setToDraw("location");
+            drawPanel.locationLast();
+        });
+        menuPanel.add(locationButton);
         drawPanel = new MyFrame(mousePoints, infoWindow);
         drawPanel.setBounds(0, 0, 800, 700);
 

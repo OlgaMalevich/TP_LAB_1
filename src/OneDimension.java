@@ -1,10 +1,7 @@
 import java.awt.*;
 public abstract class OneDimension extends Figure {
-    public Point startPoint;
-    public Point endPoint;
-    public OneDimension(){
-
-    };
+    protected Point startPoint;
+    protected Point endPoint;
     public OneDimension(Point point1, Point point2, Color color) {
         startPoint = point1;
         endPoint = point2;
@@ -22,15 +19,13 @@ public abstract class OneDimension extends Figure {
     public void setEndPoint(Point point2) {
         endPoint = point2;
     }
-    public String getLocation() {
-        String str = "Начало: (" + startPoint.x+", "+startPoint.y+"), конец: ("+endPoint.x+", "+endPoint.y+")";
-        return str;
+    public String location() {
+        return "Начало: (" + startPoint.x+", "+startPoint.y+"), конец: ("+endPoint.x+", "+endPoint.y+")";
     }
-    public void move(Point point1, Graphics g) {
+    public void move(Point point1) {
         endPoint.x += point1.x-startPoint.x;
         endPoint.y += point1.y-startPoint.y;
-        startPoint = point1;
-        draw(g);
+        startPoint = new Point(point1);
     }
 
     public void draw(Graphics g) {

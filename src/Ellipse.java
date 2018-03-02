@@ -1,17 +1,25 @@
 import java.awt.*;
 
 public class Ellipse extends TwoDimension {
-    public Point point1;
-    public Point point2;
+    protected Point point1, point2;
+    protected int hw, hh;
 
     public Ellipse(Point centerP, Point firstP, Point secondP, Color borColor, Color bkColor) {
         center = centerP;
-        if(Math.abs((centerP.x - firstP.x)) < Math.abs(centerP.x - secondP.x)){
+        if((firstP.x!=secondP.x)||(firstP.y!=secondP.y)){
+        if (Math.abs((centerP.x - firstP.x)) < Math.abs(centerP.x - secondP.x)) {
             point2 = firstP;
             point1 = secondP;
-        }else {
+        } else {
             point1 = firstP;
             point2 = secondP;
+        }
+        hw = Math.abs(point1.x - center.x);
+        hh = Math.abs(point2.y - center.y);
+        point1.x = center.x+hw;
+        point1.y = center.y;
+        point2.x = center.x;
+        point2.y = center.y+hh;
         }
         borderColor = borColor;
         backgroundColor = bkColor;
@@ -34,19 +42,22 @@ public class Ellipse extends TwoDimension {
     }
 
     public void draw(Graphics g) {
-        int w = (2 * Math.abs(point1.x - center.x));
-        int h = (2 * Math.abs(point2.y - center.y));
         g.setColor(backgroundColor);
-        g.fillOval((int) center.getX() - w/2, (int) center.getY()-h/2, w, h);
+        g.fillOval((int) center.getX() - hw, (int) center.getY() - hh, 2*hw, 2*hh);
         g.setColor(borderColor);
-        g.drawOval((int) center.getX()-w/2, (int) center.getY()-h/2, w, h);
+        g.drawOval((int) center.getX() - hw, (int) center.getY() -hh, 2*hw, 2*hh);
     }
 
-    public String getLocation() {
-        int w = (int) (2 * Math.abs(point1.getX() - center.getX()));
-        int h = (int) (2*Math.abs(point2.getY() - center.getY()));
-        String str = "Центр: ("+center.getX()+", "+center.getY()+"), ширина = "+w+", высота = "+h;
-        return str;
+    public String location() {
+        return "" + super.location() + ", ширина = " + 2*hw + ", высота = " + 2*hh;
+    }
+
+    public void move(Point newCenter) {
+        center = newCenter;
+        point1.x = center.x+hw;
+        point1.y = center.y;
+        point2.x = center.x;
+        point2.y = center.y+hh;
     }
 
 }

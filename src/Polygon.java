@@ -29,7 +29,7 @@ public class Polygon extends TwoDimension {
         g.drawPolygon(xPoints, yPoints, count);
     }
 
-    public String getLocation() {
+    public String location() {
         StringBuilder str = new StringBuilder();
         str.append("Полигон проходит через точки: ");
         for (int i = 0; i < count; i++) {
@@ -41,11 +41,12 @@ public class Polygon extends TwoDimension {
     }
 
     public void move(Point newCenter) {
-        int difX = center.x - newCenter.x;
-        int difY = center.y - newCenter.y;
+        int difX = newCenter.x - center.x;
+        int difY = newCenter.y - center.y;
+        center = newCenter;
         for (int i = 0; i < count; i++) {
-            xPoints[i] -= difX;
-            xPoints[i] -= difY;
+            xPoints[i] += difX;
+            yPoints[i] += difY;
         }
     }
 }

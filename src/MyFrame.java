@@ -10,8 +10,9 @@ class MyFrame extends JPanel {
     private LinkedList<Figure> figures;
     private LinkedList<Zigzag> zigzags;
     private Color borderColor, backgroundColor;
-    private String toDraw;
+    private String toDraw, oldToDraw;
     private int count;
+    private JTextArea infoWindow;
 
     MyFrame(Stack<Point> mPoints, JTextArea infoWindow) {
         super();
@@ -19,19 +20,20 @@ class MyFrame extends JPanel {
         mousePoints = mPoints;
         figures = new LinkedList<>();
         zigzags = new LinkedList<>();
+
+        this.infoWindow = infoWindow;
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (toDraw.equals("location"))
+                    return;
                 Point zigzagPoint = new Point();
                 if (toDraw.equals("Зигзаг") && mousePoints.size() != 0)
                     zigzagPoint = mousePoints.peek();
                 mousePoints.push(new Point(e.getX(), e.getY()));
-                System.out.println("Тык (" + e.getX() + ", " + e.getY() + ")\n");
                 switch (toDraw) {
                     case "Линия":
-
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел прямая\n");
                             Point endPoint = mousePoints.pop();
                             Point startPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -42,7 +44,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Луч":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел луч\n");
                             Point endPoint = mousePoints.pop();
                             Point startPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -53,7 +54,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Отрезок":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел отрезок\n");
                             Point endPoint = mousePoints.pop();
                             Point startPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -64,7 +64,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Зигзаг":
                         if (mousePoints.peek().equals(zigzagPoint)) {
-                            System.out.println("Зашел зигзаг\n");
                             mousePoints.pop();
                             if (mousePoints.size() >= 2) {
                                 borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -78,7 +77,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Прямоугольник":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел прямоугольник\n");
                             Point secondPoint = mousePoints.pop();
                             Point centerPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -90,7 +88,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Ромб":
                         if (mousePoints.size() == 3) {
-                            System.out.println("Зашел ромб\n");
                             Point secondPoint = mousePoints.pop();
                             Point firstPoint = mousePoints.pop();
                             Point centerPoint = mousePoints.pop();
@@ -103,7 +100,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Треугольник(произв.)":
                         if (mousePoints.size() == 3) {
-                            System.out.println("Зашел треугольник\n");
                             Point point3 = mousePoints.pop();
                             Point point2 = mousePoints.pop();
                             Point point1 = mousePoints.pop();
@@ -116,7 +112,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Треугольник(равнобедр.)":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел треугольник\n");
                             Point point2 = mousePoints.pop();
                             Point point1 = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -128,7 +123,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Эллипс":
                         if (mousePoints.size() == 3) {
-                            System.out.println("Зашел эллипс\n");
                             Point endPoint = mousePoints.pop();
                             Point startPoint = mousePoints.pop();
                             Point centerPoint = mousePoints.pop();
@@ -141,7 +135,6 @@ class MyFrame extends JPanel {
                         break;
                     case "Окружность":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел окружность\n");
                             Point newPoint = mousePoints.pop();
                             Point centerPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
@@ -153,14 +146,26 @@ class MyFrame extends JPanel {
                         break;
                     case "Правильный":
                         if (mousePoints.size() == 2) {
-                            System.out.println("Зашел правильный\n");
                             Point newPoint = mousePoints.pop();
                             Point centerPoint = mousePoints.pop();
                             borderColor = JColorChooser.showDialog(null, "Цвет границы", Color.black);
                             backgroundColor = JColorChooser.showDialog(null, "Цвет заливки", Color.black);
-                            figures.add(new RegularPolygon(count,centerPoint, newPoint, borderColor, backgroundColor));
+                            figures.add(new RegularPolygon(count, centerPoint, newPoint, borderColor, backgroundColor));
                             figures.getLast().draw(getGraphics());
                             infoWindow.setText("Нарисовано.");
+                        }
+                        break;
+                    case "move":
+                        if (mousePoints.size() == 1) {
+                            if (oldToDraw.equals("Зигзаг")) {
+                                zigzags.getLast().move(mousePoints.pop());
+                                zigzags.getLast().draw(getGraphics());
+                            } else {
+                                figures.getLast().move(mousePoints.pop());
+                                figures.getLast().draw(getGraphics());
+                            }
+                            infoWindow.setText("Перенесено.");
+                            paint(getGraphics());
                         }
                         break;
                 }
@@ -169,11 +174,33 @@ class MyFrame extends JPanel {
     }
 
     void setToDraw(String str) {
-        toDraw = str;
+        if (str.equals("location")) {
+            toDraw = str;
+            return;
+        } else {
+            if (str.equals("move")) {
+                toDraw = str;
+                return;
+            } else {
+                oldToDraw = str;
+                toDraw = str;
+            }
+        }
     }
-    void setRegCount(int count) {this.count = count;}
+
+    void setRegCount(int count) {
+        this.count = count;
+    }
+
+    void locationLast() {
+        if (oldToDraw.equals("Зигзаг"))
+            infoWindow.setText(zigzags.getLast().location());
+        else
+            infoWindow.setText(figures.getLast().location());
+    }
 
     public void paint(Graphics g) {
+        super.paint(g);
         for (Figure figure : figures) {
             figure.draw(g);
         }

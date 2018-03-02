@@ -4,8 +4,8 @@ import java.util.LinkedList;
 public class Romb extends Polygon {
     public Romb(Point centerP, Point firstP, Point secondP, Color borColor, Color bkColor) {
         super(borColor, bkColor);
+        center = centerP;
         LinkedList<Point> points = new LinkedList<>();
-        centerP = center;
         if(Math.abs((centerP.x - firstP.x)) < Math.abs(centerP.x - secondP.x)){
             Point p = firstP;
             firstP = secondP;
